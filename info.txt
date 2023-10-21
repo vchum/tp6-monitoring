@@ -1,0 +1,38 @@
+Repo HELM :
+https://artifacthub.io/packages/helm/grafana/grafana
+https://artifacthub.io/packages/helm/prometheus-community/prometheus
+https://artifacthub.io/packages/helm/prometheus-community/prometheus-mysql-exporter
+https://artifacthub.io/packages/helm/bitnami/wordpress
+
+URL de Prometheus pour Grafana : http://my-prometheus-server (nom du service)
+
+WordPress :
+host : my-wordpress-mariadb:3306
+db : bitnami_wordpress
+user : bn_wordpress
+
+Commandes importantes pour administration Wordpress :
+export WORDPRESS_PASSWORD=$(kubectl get secret --namespace default wordpress -o jsonpath="{.data.wordpress-password}" | base64 -d)
+export MARIADB_ROOT_PASSWORD=$(kubectl get secret --namespace default wordpress-mariadb -o jsonpath="{.data.mariadb-root-password}" | base64 -d)
+export MARIADB_PASSWORD=$(kubectl get secret --namespace default wordpress-mariadb -o jsonpath="{.data.mariadb-password}" | base64 -d)
+export MARIADB_PVC=$(kubectl get pvc -l app.kubernetes.io/instance=wordpress,app.kubernetes.io/name=mariadb,app.kubernetes.io/component=primary -o jsonpath="{.items[0].metadata.name}")
+
+Important : Le fichier /etc/grafana/grafana.ini est en RO. Impossible de modifier via installation Kube.
+
+SMTP : exemple pour GMAIL
+[smtp]
+enabled = true
+host = smtp.gmail.com:465
+user = USER@GMAIL
+# If the password contains # or ; you have to wrap it with triple quotes. Ex """
+password = USER@GMAIL_PWD
+;cert_file =
+;key_file =
+skip_verify = true
+from_address = USER@GMAIL
+;from_address = admin@grafana.localhost
+from_name = Grafana
+# EHLO identity in SMTP dialog (defaults to instance_name)
+;ehlo_identity = dashboard.example.com
+# SMTP startTLS policy (defaults to 'OpportunisticStartTLS')
+;startTLS_policy = NoStartTLS
